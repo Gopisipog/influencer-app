@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "postbuild": "cp dist/influencer-verification/browser/* dist/influencer-verification/ || true"
   },
   "private": true,
   "dependencies": {
@@ -18,6 +19,7 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "@netlify/angular-runtime": "^2.2.1",
     "openai": "^4.80.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
