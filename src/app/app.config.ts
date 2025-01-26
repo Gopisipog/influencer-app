@@ -1,16 +1,11 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withHashLocation } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
-
+import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
+import { provideClientHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(
-      routes,
-      withComponentInputBinding(),
-      // Remove withHashLocation() if it exists
-    ),
-    provideHttpClient()
+    provideRouter(routes),
+    provideClientHydration()
   ]
 };
