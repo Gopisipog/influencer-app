@@ -1,0 +1,22 @@
+// Shared mixins
+@mixin base-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dee2e6;
+}
+
+@mixin grid-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+// Variables
+:root {
+  --status-success: #28a745;
+  --status-warning: #ffc107;
+  --status-danger: #dc3545;
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+}

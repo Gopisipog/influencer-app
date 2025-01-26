@@ -1,0 +1,30 @@
+<div class="leaderboard-container">
+  <header class="leaderboard-header">
+    <h1>Health Influencer Verification Leaderboard</h1>
+    <div class="controls">
+      <button (click)="sortByTrustScore()">Sort by Trust Score</button>
+      <button (click)="sortByFollowers()">Sort by Followers</button>
+      <button [routerLink]="['/config']">Go to Research Configuration</button>
+    </div>
+  </header>
+
+  <div class="influencer-grid">
+    @for (influencer of influencers; track influencer.id) {
+      <div class="influencer-card" [routerLink]="['/influencer', influencer.id]">
+        <div class="trust-score">{{ influencer.trustScore }}%</div>
+        <h3>{{ influencer.name }}</h3>
+        <p>{{'@'}}{{ influencer.handle }}</p>
+        <div class="stats">
+          <div class="followers">
+            {{ influencer.followerCount | number }} followers
+          </div>
+          <div class="claims">
+            <div>Verified: {{ influencer.claimStats.verified }}</div>
+            <div>Questionable: {{ influencer.claimStats.questionable }}</div>
+            <div>Debunked: {{ influencer.claimStats.debunked }}</div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

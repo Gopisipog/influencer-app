@@ -1,0 +1,339 @@
+<div class="research-container">
+  <div class="config-section">
+    <h1>Research Configuration</h1>
+    
+    <form (ngSubmit)="sendPrompt()" class="research-form">
+      <div class="form-group">
+        <label for="influencerName">Influencer Name*</label>
+        <input 
+          type="text" 
+          id="influencerName" 
+          [(ngModel)]="influencerName" 
+          name="influencerName"
+          required
+          placeholder="Enter influencer's full name"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="timeRange">Analysis Time Range</label>
+        <select id="timeRange" [(ngModel)]="timeRange" name="timeRange">
+          <option value="last_month">Last Month</option>
+          <option value="last_3_months">Last 3 Months</option>
+          <option value="last_6_months">Last 6 Months</option>
+          <option value="last_year">Last Year</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="claimsToAnalyze">Claims to Analyze</label>
+          <input 
+            type="number" 
+            id="claimsToAnalyze" 
+            [(ngModel)]="claimsToAnalyze" 
+            name="claimsToAnalyze"
+            min="1"
+            max="100"
+          >
+        </div>
+
+        <div class="form-group half-width">
+          <label for="productsToFind">Products to Analyze</label>
+          <input 
+            type="number" 
+            id="productsToFind" 
+            [(ngModel)]="productsToFind" 
+            name="productsToFind"
+            min="1"
+            max="50"
+          >
+        </div>
+      </div>
+
+      <div class="form-group checkboxes">
+        <label class="checkbox-container">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="includeRevenueAnalysis" 
+            name="includeRevenueAnalysis"
+          >
+          Include Revenue Analysis
+        </label>
+
+        <label class="checkbox-container">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="verifyWithScientificJournals" 
+            name="verifyWithScientificJournals"
+          >
+          Verify with Scientific Journals
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Additional Research Notes</label>
+        <textarea 
+          id="notes" 
+          [(ngModel)]="notesForResearchAssistant" 
+          name="notes"
+          placeholder="Add any specific research requirements or focus areas"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <button type="submit" [disabled]="loading" class="submit-button">
+        {{ loading ? 'Analyzing...' : 'Generate Research Report' }}
+      </button>
+    </form>
+  </div>
+
+  @if (error) {
+    <div class="error-message">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Analyzing influencer data and generating report...</p>
+    </div>
+  }
+
+  @if (researchReport) {
+    <div class="research-report">
+      <!-- Summary Section -->
+      <section class="summary-section">
+        <div class="influencer-header">
+          <div class="influencer-main">
+            <h2>{{ influencerName }}</h2>
+            <div class="trust-score-badge">
+              Trust Score: {{ researchReport.trustScore }}%
+            </div>
+          </div>
+          <div class="expertise-tags">
+            @for (category of getExpertiseCategories(); track category) {
+              <span class="tag">{{ category }}</span>
+            }
+          </div>
+          <p class="bio">{{ researchReport.influencerInfo?.bio }}</p>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <h4>Trust Score</h4>
+            <div class="score">{{ researchReport.trustScore }}%</div>
+            <p>Based on {{ researchReport.claims?.length }} verified claims</p>
+          </div>
+          
+          @if (researchReport.revenueAnalysis) {
+            <div class="metric-card">
+              <div class="metric-icon">💰</div>
+              <h4>Revenue</h4>
+              <div class="revenue">{{ researchReport.revenueAnalysis?.estimatedRevenue }}</div>
+              <p>Estimated annual</p>
+            </div>
+          }
+          
+          <div class="metric-card">
+            <div class="metric-icon">🏷️</div>
+            <h4>Products</h4>
+            <div class="count">{{ researchReport.products?.length }}</div>
+            <p>Analyzed products</p>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-icon">👥</div>
+            <h4>Followers</h4>
+            <div class="followers">{{ researchReport.influencerInfo?.followers }}</div>
+            <p>Total following</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Claims Analysis Section -->
+      <section class="claims-section">
+        <div class="section-header">
+          <h3>Claims Analysis</h3>
+          <div class="controls">
+            <div class="filters">
+              <select [(ngModel)]="selectedCategory" (change)="filterClaims()">
+                <option value="">All Categories</option>
+                @for (category of getClaimCategories(); track category) {
+                  <option [value]="category">{{ category }}</option>
+                }
+              </select>
+              <select [(ngModel)]="selectedStatus" (change)="filterClaims()">
+                <option value="">All Statuses</option>
+                <option value="Supported">Supported</option>
+                <option value="Questionable">Questionable</option>
+                <option value="Debunked">Debunked</option>
+              </select>
+              <select [(ngModel)]="sortBy" (change)="sortClaims()">
+                <option value="date">Latest First</option>
+                <option value="confidence">Confidence Score</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        @if (activeFilters.length > 0) {
+          <div class="active-filters">
+            @for (filter of activeFilters; track filter) {
+              <span class="filter-tag">
+                {{ filter }}
+                <button class="remove-filter" (click)="removeFilter(filter)">×</button>
+              </span>
+            }
+          </div>
+        }
+
+        <div class="claims-grid">
+          @for (claim of filteredClaims; track claim.id) {
+            <div class="claim-card" [ngClass]="getClaimStatusClass(claim.status)">
+              <div class="claim-header">
+                <span class="status-badge">{{ claim.status }}</span>
+                <span class="date">{{ claim.date | date }}</span>
+              </div>
+              <p class="claim-text">{{ claim.claim }}</p>
+              <div class="claim-details">
+                <div class="source-info">
+                  <strong>Source:</strong>
+                  <a [href]="claim.link" target="_blank" rel="noopener noreferrer">
+                    {{ claim.source }}
+                    <span class="external-link">↗</span>
+                  </a>
+                </div>
+                <div class="evidence">
+                  <strong>Evidence:</strong>
+                  <p>{{ claim.evidence }}</p>
+                </div>
+                <div class="confidence-score">
+                  Confidence: {{ claim.confidenceScore }}%
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Products Section -->
+      @if (researchReport.products?.length) {
+        <section class="products-section">
+          <h3>Product Analysis</h3>
+          <div class="products-grid">
+            @for (product of researchReport.products; track product.name) {
+              <div class="product-card">
+                <div class="product-header">
+                  <h4>{{ product.name }}</h4>
+                  <span class="verification-badge" [ngClass]="product.verificationStatus.toLowerCase()">
+                    {{ product.verificationStatus }}
+                  </span>
+                </div>
+                <div class="product-details">
+                  <span class="product-type">{{ product.type }}</span>
+                  @if (product.price) {
+                    <span class="product-price">${{ product.price }}</span>
+                  }
+                </div>
+                <div class="product-claims">
+                  <h5>Claims:</h5>
+                  <ul>
+                    @for (claim of product.claims; track claim) {
+                      <li>{{ claim }}</li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Revenue Analysis Section -->
+      @if (researchReport.revenueAnalysis) {
+        <section class="revenue-section">
+          <h3>Revenue Analysis</h3>
+          <div class="revenue-details">
+            <div class="revenue-estimate">
+              <h4>Estimated Annual Revenue</h4>
+              <p class="revenue-amount">{{ researchReport.revenueAnalysis.estimatedRevenue }}</p>
+            </div>
+            
+            <div class="revenue-breakdown">
+              <div class="revenue-sources">
+                <h4>Primary Revenue Sources</h4>
+                <ul>
+                  @for (source of researchReport.revenueAnalysis.primarySources; track source) {
+                    <li>{{ source }}</li>
+                  }
+                </ul>
+              </div>
+              
+              <div class="partnerships">
+                <h4>Key Partnerships</h4>
+                <ul>
+                  @for (partnership of researchReport.revenueAnalysis.partnerships; track partnership) {
+                    <li>{{ partnership }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      }
+    </div>
+  }
+</div>
+<!-- 
+<div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Research Tasks</h1>
+        <form>
+          <div class="form-group">
+            <label for="influencerName">Influencer Name:</label>
+            <input type="text" id="influencerName" [(ngModel)]="influencerName" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="timeRange">Time Range:</label>
+            <select id="timeRange" [(ngModel)]="timeRange" class="form-control">
+              <option value="Last Month">Last Month</option>
+              <option value="Last 3 Months">Last 3 Months</option>
+              <option value="Last Year">Last Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="claimsToAnalyze">Claims to Analyze:</label>
+            <input type="number" id="claimsToAnalyze" [(ngModel)]="claimsToAnalyze" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="productsToFind">Products to Find:</label>
+            <input type="number" id="productsToFind" [(ngModel)]="productsToFind" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label for="notes">Notes for Research Assistant:</label>
+            <textarea id="notes" [(ngModel)]="notesForResearchAssistant" class="form-control"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Scientific Journals:</label>
+            <div *ngFor="let journal of ['Journal A', 'Journal B', 'Journal C']">
+              <input type="checkbox" (change)="toggleJournal(journal)" /> {{ journal }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" [(ngModel)]="includeRevenueAnalysis" /> Include Revenue Analysis
+            </label>
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" [(ngModel)]="verifyWithScientificJournals" /> Verify with Scientific Journals
+            </label>
+          </div>
+          <button type="button" (click)="startResearch()" class="btn btn-primary">Start Research</button>
+        </form>
+      </div>
+    </div>
+  </div> -->

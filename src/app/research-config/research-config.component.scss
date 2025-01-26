@@ -1,0 +1,82 @@
+@import '../../styles/shared';
+
+.research-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.config-section {
+  @extend .base-card !optional;
+  @include base-card;
+  margin-bottom: 2rem;
+}
+
+.research-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+}
+
+.claims-grid {
+  @include grid-layout;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+  .claim-card {
+    @include base-card;
+    
+    &.supported { border-left: 4px solid var(--status-success); }
+    &.debunked { border-left: 4px solid var(--status-danger); }
+    &.questionable { border-left: 4px solid var(--status-warning); }
+  }
+}
+
+.products-grid {
+  @include grid-layout;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
+  .product-card {
+    @include base-card;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+.error-message {
+  background: var(--status-danger);
+  color: white;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

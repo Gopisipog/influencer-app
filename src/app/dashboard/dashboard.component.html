@@ -1,0 +1,54 @@
+<div class="dashboard-container">
+  <h1>Influencer Trust Leaderboard</h1>
+  <p class="subtitle">Real-time rankings of health influencers based on scientific accuracy, credibility, and transparency. Updated daily using AI-powered analysis.</p>
+
+  @if (loading) {
+    <div class="loading">Loading dashboard data...</div>
+  } @else if (error) {
+    <div class="error">{{ error }}</div>
+  } @else {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Active Influencers</h3>
+        <div class="stat-value">{{ stats?.activeInfluencers | number }}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Claims Verified</h3>
+        <div class="stat-value">{{ stats?.claimsVerified | number }}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Average Trust Score</h3>
+        <div class="stat-value">{{ stats?.averageTrustScore | number:'1.1-1' }}%</div>
+      </div>
+    </div>
+
+    <div class="rankings-table">
+      <table>
+        <thead>
+          <tr>
+            <th>RANK</th>
+            <th>INFLUENCER</th>
+            <th>CATEGORY</th>
+            <th>TRUST SCORE</th>
+            <th>TREND</th>
+            <th>FOLLOWERS</th>
+            <th>VERIFIED CLAIMS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (influencer of rankings; track influencer.rank) {
+            <tr>
+              <td>#{{ influencer.rank }}</td>
+              <td>{{ influencer.name }}</td>
+              <td>{{ influencer.category | replace:'_':' ' }}</td>
+              <td>{{ influencer.trustScore | number:'1.0-0' }}%</td>
+              <td>{{ getTrendIcon(influencer.trend) }}</td>
+              <td>{{ influencer.followers }}</td>
+              <td>{{ influencer.verifiedClaims | number }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
