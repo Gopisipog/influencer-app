@@ -2,12 +2,7 @@
   "name": "influencer-verification",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "postbuild": "cp dist/influencer-verification/browser/* dist/influencer-verification/ || true"
+    "build": "ng build --configuration production"
   },
   "private": true,
   "dependencies": {
