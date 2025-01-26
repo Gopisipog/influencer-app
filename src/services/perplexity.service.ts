@@ -14,10 +14,9 @@ export class PerplexityService {
   constructor(private http: HttpClient) {}
 
   getResponse(prompt: string): Observable<PerplexityResponse> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.apiKey}`,
-      'Content-Type': 'application/json'
-    });
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${this.apiKey}`)
+      .set('Content-Type', 'application/json');
 
     const body = {
       model: "llama-3.1-sonar-small-128k-online",
