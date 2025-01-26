@@ -1,8 +1,18 @@
 {
   "name": "influencer-verification",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
-    "build": "ng build --configuration production"
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build --configuration production",
+    "build:prod": "node set-env.js && ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "preinstall": "npx only-allow npm",
+    "postinstall": "husky install",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
@@ -25,12 +35,27 @@
     "@angular/cli": "^19.1.4",
     "@angular/compiler-cli": "^19.1.0",
     "@types/jasmine": "~5.1.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "husky": "^9.0.11",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "lint-staged": "^15.2.2",
+    "typescript": "~5.4.2"
+  },
+  "engines": {
+    "node": "^20.11.1",
+    "npm": "^10.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
