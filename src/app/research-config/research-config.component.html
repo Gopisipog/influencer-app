@@ -108,8 +108,6 @@
             <h2>Research Report: {{ influencerName }}</h2>
             <span class="report-date">Generated on {{ getCurrentDate() }}</span>
           </div>
-          <div class="trust-score-container">
-          </div>
         </div>
 
         <!-- Influencer Profile -->
@@ -259,60 +257,6 @@
           </div>
         </section>
       }
-
-      <!-- Trust Score Analysis Section -->
-      <section class="overall-trust-section">
-        <div class="trust-header">
-          <h2>Trust Score Analysis</h2>
-          <div class="date-range">Last Updated: {{ getCurrentDate() }}</div>
-        </div>
-
-        <div class="trust-score-display">
-          <div class="score-content">
-          </div>
-
-          <div class="score-details">
-            <div class="metrics-grid">
-              <div class="metric-card">
-                <div class="metric-label">Claims Accuracy</div>
-                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.claimsScore >= 70"
-                     [class.neutral]="researchReport.trustScoreFactors.claimsScore >= 40 && researchReport.trustScoreFactors.claimsScore < 70"
-                     [class.negative]="researchReport.trustScoreFactors.claimsScore < 40">
-                  {{ researchReport.trustScoreFactors.claimsScore }}%
-                </div>
-                <div class="metric-subtitle">40% weight</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">Credentials</div>
-                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.credentialsScore >= 70"
-                     [class.neutral]="researchReport.trustScoreFactors.credentialsScore >= 40 && researchReport.trustScoreFactors.credentialsScore < 70"
-                     [class.negative]="researchReport.trustScoreFactors.credentialsScore < 40">
-                  {{ researchReport.trustScoreFactors.credentialsScore }}%
-                </div>
-                <div class="metric-subtitle">25% weight</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">Source Quality</div>
-                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.sourceQualityScore >= 70"
-                     [class.neutral]="researchReport.trustScoreFactors.sourceQualityScore >= 40 && researchReport.trustScoreFactors.sourceQualityScore < 70"
-                     [class.negative]="researchReport.trustScoreFactors.sourceQualityScore < 40">
-                  {{ researchReport.trustScoreFactors.sourceQualityScore }}%
-                </div>
-                <div class="metric-subtitle">20% weight</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">Consistency</div>
-                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.consistencyScore >= 70"
-                     [class.neutral]="researchReport.trustScoreFactors.consistencyScore >= 40 && researchReport.trustScoreFactors.consistencyScore < 70"
-                     [class.negative]="researchReport.trustScoreFactors.consistencyScore < 40">
-                  {{ researchReport.trustScoreFactors.consistencyScore }}%
-                </div>
-                <div class="metric-subtitle">15% weight</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   }
 </div>
