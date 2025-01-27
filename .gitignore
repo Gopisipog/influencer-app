@@ -42,7 +42,14 @@ testem.log
 Thumbs.db
 
 # Environment files
-# Temporarily comment these out until initial deployment
-# /src/environments/environment.development.ts
-# /src/environments/environment.production.ts
-# /src/environments/environment.ts
+/src/environments/environment.ts
+/src/environments/environment.development.ts
+/src/environments/environment.production.ts
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Production build files
+/dist-production

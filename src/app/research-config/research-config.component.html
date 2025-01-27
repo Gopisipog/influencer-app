@@ -101,117 +101,99 @@
 
   @if (researchReport) {
     <div class="research-report">
-      <!-- Summary Section -->
-      <section class="summary-section">
-        <div class="influencer-header">
-          <div class="influencer-main">
-            <h2>{{ influencerName }}</h2>
-            <div class="trust-score-badge">
-              Trust Score: {{ researchReport.trustScore }}%
-            </div>
+      <!-- Header Section -->
+      <section class="report-header">
+        <div class="header-content">
+          <div class="title-section">
+            <h2>Research Report: {{ influencerName }}</h2>
+            <span class="report-date">Generated on {{ getCurrentDate() }}</span>
           </div>
-          <div class="expertise-tags">
-            @for (category of getExpertiseCategories(); track category) {
-              <span class="tag">{{ category }}</span>
-            }
+          <div class="trust-score-container">
           </div>
-          <p class="bio">{{ researchReport.influencerInfo?.bio }}</p>
         </div>
 
-        <!-- Key Metrics Cards -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-icon">📊</div>
-            <h4>Trust Score</h4>
-            <div class="score">{{ researchReport.trustScore }}%</div>
-            <p>Based on {{ researchReport.claims?.length }} verified claims</p>
-          </div>
-          
-          @if (researchReport.revenueAnalysis) {
-            <div class="metric-card">
-              <div class="metric-icon">💰</div>
-              <h4>Revenue</h4>
-              <div class="revenue">{{ researchReport.revenueAnalysis?.estimatedRevenue }}</div>
-              <p>Estimated annual</p>
+        <!-- Influencer Profile -->
+        <div class="influencer-profile">
+          <div class="profile-section">
+            <h3>Profile Overview</h3>
+            <p class="bio">{{ researchReport.influencerInfo.bio }}</p>
+            <div class="credentials">
+              <h4>Credentials</h4>
+              <ul class="credentials-list">
+                @for (credential of researchReport.influencerInfo.credentials; track credential) {
+                  <li>{{ credential }}</li>
+                }
+              </ul>
             </div>
-          }
-          
-          <div class="metric-card">
-            <div class="metric-icon">🏷️</div>
-            <h4>Products</h4>
-            <div class="count">{{ researchReport.products?.length }}</div>
-            <p>Analyzed products</p>
-          </div>
-          
-          <div class="metric-card">
-            <div class="metric-icon">👥</div>
-            <h4>Followers</h4>
-            <div class="followers">{{ researchReport.influencerInfo?.followers }}</div>
-            <p>Total following</p>
+            <div class="expertise-areas">
+              <h4>Areas of Expertise</h4>
+              <div class="expertise-tags">
+                @for (area of researchReport.influencerInfo.expertise; track area) {
+                  <span class="expertise-tag">{{ area }}</span>
+                }
+              </div>
+            </div>
+            <div class="followers-info">
+              <h4>Following</h4>
+              <span class="followers-count">{{ researchReport.influencerInfo.followers }}</span>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- Claims Analysis Section -->
-      <section class="claims-section">
-        <div class="section-header">
-          <h3>Claims Analysis</h3>
-          <div class="controls">
-            <div class="filters">
-              <select [(ngModel)]="selectedCategory" (change)="filterClaims()">
-                <option value="">All Categories</option>
-                @for (category of getClaimCategories(); track category) {
-                  <option [value]="category">{{ category }}</option>
-                }
-              </select>
-              <select [(ngModel)]="selectedStatus" (change)="filterClaims()">
-                <option value="">All Statuses</option>
-                <option value="Supported">Supported</option>
-                <option value="Questionable">Questionable</option>
-                <option value="Debunked">Debunked</option>
-              </select>
-              <select [(ngModel)]="sortBy" (change)="sortClaims()">
-                <option value="date">Latest First</option>
-                <option value="confidence">Confidence Score</option>
-              </select>
-            </div>
+      <section class="claims-analysis">
+        <h3>Claims Analysis</h3>
+        <div class="claims-controls">
+          <div class="filters">
+            <select [(ngModel)]="selectedCategory" (change)="filterClaims()">
+              <option value="">All Categories</option>
+              @for (category of getClaimCategories(); track category) {
+                <option [value]="category">{{ category }}</option>
+              }
+            </select>
+            <select [(ngModel)]="selectedStatus" (change)="filterClaims()">
+              <option value="">All Statuses</option>
+              <option value="Verified">Verified</option>
+              <option value="Questionable">Questionable</option>
+              <option value="Debunked">Debunked</option>
+            </select>
+            <select [(ngModel)]="sortBy" (change)="sortClaims()">
+              <option value="date">Sort by Date</option>
+            </select>
           </div>
-        </div>
-
-        @if (activeFilters.length > 0) {
           <div class="active-filters">
             @for (filter of activeFilters; track filter) {
               <span class="filter-tag">
                 {{ filter }}
-                <button class="remove-filter" (click)="removeFilter(filter)">×</button>
+                <button (click)="removeFilter(filter)" class="remove-filter">×</button>
               </span>
             }
           </div>
-        }
+        </div>
 
         <div class="claims-grid">
           @for (claim of filteredClaims; track claim.id) {
-            <div class="claim-card" [ngClass]="getClaimStatusClass(claim.status)">
+            <div class="claim-card" [class]="getClaimStatusClass(claim.status)">
               <div class="claim-header">
-                <span class="status-badge">{{ claim.status }}</span>
-                <span class="date">{{ claim.date | date }}</span>
+                <span class="claim-category">{{ claim.category }}</span>
+                <span class="claim-date">{{ claim.date | date }}</span>
               </div>
               <p class="claim-text">{{ claim.claim }}</p>
-              <div class="claim-details">
-                <div class="source-info">
-                  <strong>Source:</strong>
-                  <a [href]="claim.link" target="_blank" rel="noopener noreferrer">
-                    {{ claim.source }}
-                    <span class="external-link">↗</span>
-                  </a>
-                </div>
-                <div class="evidence">
-                  <strong>Evidence:</strong>
-                  <p>{{ claim.evidence }}</p>
-                </div>
-                <div class="confidence-score">
-                  Confidence: {{ claim.confidenceScore }}%
-                </div>
+              <div class="claim-evidence">
+                <h4>Evidence:</h4>
+                <p>{{ claim.evidence }}</p>
+                @if (claim.source) {
+                  <div class="source-info">
+                    <span>Source: </span>
+                    <a [href]="claim.link" target="_blank" rel="noopener noreferrer">{{ claim.source }}</a>
+                  </div>
+                }
+              </div>
+              <div class="claim-footer">
+                <span class="status-badge" [class]="getClaimStatusClass(claim.status)">
+                  {{ claim.status }}
+                </span>
               </div>
             </div>
           }
@@ -219,24 +201,17 @@
       </section>
 
       <!-- Products Section -->
-      @if (researchReport.products?.length) {
-        <section class="products-section">
-          <h3>Product Analysis</h3>
+      @if (researchReport.products.length > 0) {
+        <section class="products-analysis">
+          <h3>Promoted Products Analysis</h3>
           <div class="products-grid">
             @for (product of researchReport.products; track product.name) {
               <div class="product-card">
                 <div class="product-header">
                   <h4>{{ product.name }}</h4>
-                  <span class="verification-badge" [ngClass]="product.verificationStatus.toLowerCase()">
-                    {{ product.verificationStatus }}
-                  </span>
-                </div>
-                <div class="product-details">
                   <span class="product-type">{{ product.type }}</span>
-                  @if (product.price) {
-                    <span class="product-price">${{ product.price }}</span>
-                  }
                 </div>
+                <div class="product-price">{{ product.price }}</div>
                 <div class="product-claims">
                   <h5>Claims:</h5>
                   <ul>
@@ -244,6 +219,9 @@
                       <li>{{ claim }}</li>
                     }
                   </ul>
+                </div>
+                <div class="verification-status" [class]="product.verificationStatus.toLowerCase()">
+                  {{ product.verificationStatus }}
                 </div>
               </div>
             }
@@ -253,24 +231,22 @@
 
       <!-- Revenue Analysis Section -->
       @if (researchReport.revenueAnalysis) {
-        <section class="revenue-section">
+        <section class="revenue-analysis">
           <h3>Revenue Analysis</h3>
-          <div class="revenue-details">
+          <div class="revenue-content">
             <div class="revenue-estimate">
               <h4>Estimated Annual Revenue</h4>
-              <p class="revenue-amount">{{ researchReport.revenueAnalysis.estimatedRevenue }}</p>
+              <div class="amount">{{ researchReport.revenueAnalysis.estimatedRevenue }}</div>
             </div>
-            
-            <div class="revenue-breakdown">
-              <div class="revenue-sources">
-                <h4>Primary Revenue Sources</h4>
+            <div class="revenue-details">
+              <div class="sources">
+                <h4>Revenue Sources</h4>
                 <ul>
                   @for (source of researchReport.revenueAnalysis.primarySources; track source) {
                     <li>{{ source }}</li>
                   }
                 </ul>
               </div>
-              
               <div class="partnerships">
                 <h4>Key Partnerships</h4>
                 <ul>
@@ -283,6 +259,60 @@
           </div>
         </section>
       }
+
+      <!-- Trust Score Analysis Section -->
+      <section class="overall-trust-section">
+        <div class="trust-header">
+          <h2>Trust Score Analysis</h2>
+          <div class="date-range">Last Updated: {{ getCurrentDate() }}</div>
+        </div>
+
+        <div class="trust-score-display">
+          <div class="score-content">
+          </div>
+
+          <div class="score-details">
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-label">Claims Accuracy</div>
+                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.claimsScore >= 70"
+                     [class.neutral]="researchReport.trustScoreFactors.claimsScore >= 40 && researchReport.trustScoreFactors.claimsScore < 70"
+                     [class.negative]="researchReport.trustScoreFactors.claimsScore < 40">
+                  {{ researchReport.trustScoreFactors.claimsScore }}%
+                </div>
+                <div class="metric-subtitle">40% weight</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Credentials</div>
+                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.credentialsScore >= 70"
+                     [class.neutral]="researchReport.trustScoreFactors.credentialsScore >= 40 && researchReport.trustScoreFactors.credentialsScore < 70"
+                     [class.negative]="researchReport.trustScoreFactors.credentialsScore < 40">
+                  {{ researchReport.trustScoreFactors.credentialsScore }}%
+                </div>
+                <div class="metric-subtitle">25% weight</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Source Quality</div>
+                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.sourceQualityScore >= 70"
+                     [class.neutral]="researchReport.trustScoreFactors.sourceQualityScore >= 40 && researchReport.trustScoreFactors.sourceQualityScore < 70"
+                     [class.negative]="researchReport.trustScoreFactors.sourceQualityScore < 40">
+                  {{ researchReport.trustScoreFactors.sourceQualityScore }}%
+                </div>
+                <div class="metric-subtitle">20% weight</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Consistency</div>
+                <div class="metric-value" [class.positive]="researchReport.trustScoreFactors.consistencyScore >= 70"
+                     [class.neutral]="researchReport.trustScoreFactors.consistencyScore >= 40 && researchReport.trustScoreFactors.consistencyScore < 70"
+                     [class.negative]="researchReport.trustScoreFactors.consistencyScore < 40">
+                  {{ researchReport.trustScoreFactors.consistencyScore }}%
+                </div>
+                <div class="metric-subtitle">15% weight</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   }
 </div>

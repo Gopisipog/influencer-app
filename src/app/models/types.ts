@@ -104,7 +104,6 @@ export interface ResearchReport {
     followers: string;
     credentials: string[];
   };
-  trustScore: number;
   claims: ResearchClaim[];
   products: Product[];
   revenueAnalysis?: RevenueAnalysis;
@@ -119,7 +118,6 @@ export interface ResearchClaim {
   link: string;
   evidence: string;
   date: string;
-  confidenceScore: number;
 }
 
 export interface RevenueAnalysis {

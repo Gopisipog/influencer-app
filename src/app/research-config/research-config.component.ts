@@ -5,6 +5,13 @@ import { RouterModule } from '@angular/router';
 import { PerplexityService } from '../../services/perplexity.service';
 import { PerplexityResponse, ResearchReport, ResearchClaim, VerificationStatus } from '../models/types';
 
+interface TrustScoreFactors {
+  claimsScore: number;
+  credentialsScore: number;
+  sourceQualityScore: number;
+  consistencyScore: number;
+}
+
 @Component({
   selector: 'app-research-config',
   standalone: true,
@@ -200,10 +207,7 @@ export class ResearchConfigComponent {
 
   sortClaims() {
     this.filteredClaims.sort((a, b) => {
-      if (this.sortBy === 'date') {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      }
-      return b.confidenceScore - a.confidenceScore;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
   }
 
@@ -217,7 +221,7 @@ export class ResearchConfigComponent {
     this.filterClaims();
   }
 
-  private processResearchReport(content: string): ResearchReport {
+  processResearchReport(content: string): ResearchReport {
     try {
       const jsonStr = this.extractJsonFromText(content);
       if (!jsonStr) {
@@ -238,7 +242,6 @@ export class ResearchConfigComponent {
             ? rawData.influencerInfo.credentials 
             : []
         },
-        trustScore: Number(rawData.trustScore) || 0,
         claims: (rawData.claims || []).map((claim: any) => ({
           id: claim.id || `claim-${Math.random().toString(36).substr(2, 9)}`,
           claim: claim.claim || '',
@@ -247,8 +250,7 @@ export class ResearchConfigComponent {
           source: claim.source || 'Unknown source',
           link: this.validateUrl(claim.link),
           evidence: claim.evidence || 'No evidence provided',
-          date: this.validateDate(claim.date),
-          confidenceScore: Number(claim.confidenceScore) || 0
+          date: this.validateDate(claim.date)
         })),
         products: (rawData.products || []).map((product: any) => ({
           name: product.name || 'Unnamed product',
@@ -271,7 +273,7 @@ export class ResearchConfigComponent {
             : []
         };
       }
-
+      
       return report;
     } catch (e) {
       console.error('Error processing research report:', e);

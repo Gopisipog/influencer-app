@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  perplexityApiKey: 'your-perplexity-api-key',
-  openAiApiKey: 'your-openai-api-key'
+  perplexityApiKey: 'PERPLEXITY_API_KEY',
+  openAiApiKey: 'OPENAI_API_KEY'
 };

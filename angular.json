@@ -35,10 +35,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "src/styles/_shared.scss"
+              "src/styles.scss"
             ],
-            "inlineStyleLanguage": "scss",
             "stylePreprocessorOptions": {
               "includePaths": [
                 "src/styles"

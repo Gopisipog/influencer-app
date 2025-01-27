@@ -25,5 +25,9 @@ export const routes: Routes = [
   { 
     path: 'influencer/:id', 
     component: InfluencerDetailComponent 
+  },
+  {
+    path: '**',
+    redirectTo: 'dashboard'
   }
 ];
