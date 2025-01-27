@@ -9,6 +9,10 @@ import { firstValueFrom } from 'rxjs';
 export class DashboardService {
   constructor(private perplexityService: PerplexityService) {}
 
+  setApiKey(key: string) {
+    this.perplexityService.setApiKey(key);
+  }
+
   async getDashboardData(): Promise<{stats: DashboardStats, rankings: InfluencerRanking[]}> {
     const prompt = `
       Return ONLY a JSON response without any additional text or explanation.
@@ -56,7 +60,7 @@ export class DashboardService {
       return this.normalizeData(rawData);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      return this.getDefaultData();
+      throw error;
     }
   }
 

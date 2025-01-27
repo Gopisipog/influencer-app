@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -19,7 +19,7 @@ interface TrustScoreFactors {
   templateUrl: './research-config.component.html',
   styleUrls: ['./research-config.component.scss']
 })
-export class ResearchConfigComponent {
+export class ResearchConfigComponent implements OnInit {
   influencerName: string = '';
   timeRange: string = 'last_3_months';
   claimsToAnalyze: number = 50;
@@ -35,8 +35,25 @@ export class ResearchConfigComponent {
   sortBy: string = 'date';
   activeFilters: string[] = [];
   filteredClaims: ResearchClaim[] = [];
+  showApiKeyModal = false;
+  apiKey = '';
 
   constructor(private perplexityService: PerplexityService) {}
+
+  ngOnInit() {
+    const savedApiKey = localStorage.getItem('perplexity_api_key');
+    if (!savedApiKey) {
+      this.showApiKeyModal = true;
+    }
+  }
+
+  saveApiKey() {
+    if (this.apiKey.trim()) {
+      this.perplexityService.setApiKey(this.apiKey.trim());
+      this.showApiKeyModal = false;
+      this.apiKey = '';
+    }
+  }
 
   getCurrentDate(): string {
     return new Date().toLocaleDateString('en-US', {
@@ -93,7 +110,12 @@ export class ResearchConfigComponent {
       },
       error: (error) => {
         console.error('API error:', error);
-        this.error = 'Failed to generate research report';
+        if (error.message === 'API_KEY_REQUIRED') {
+          this.showApiKeyModal = true;
+          this.error = 'Please enter your Perplexity API key to continue';
+        } else {
+          this.error = 'Failed to generate research report';
+        }
         this.loading = false;
       }
     });

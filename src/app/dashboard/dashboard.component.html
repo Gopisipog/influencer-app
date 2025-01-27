@@ -1,3 +1,25 @@
+<div *ngIf="showApiKeyModal" class="api-key-modal">
+  <div class="modal-content">
+    <h2>Enter Perplexity API Key</h2>
+    <p>To use this application, you need to provide your Perplexity API key.</p>
+    <div class="form-group">
+      <input 
+        type="password" 
+        [(ngModel)]="apiKey" 
+        placeholder="Enter your API key"
+        (keyup.enter)="saveApiKey()"
+      >
+    </div>
+    <button (click)="saveApiKey()" [disabled]="!apiKey.trim()">Save API Key</button>
+    <p class="help-text">
+      You can get your API key from 
+      <a href="https://www.perplexity.ai/settings" target="_blank" rel="noopener noreferrer">
+        Perplexity AI Settings
+      </a>
+    </p>
+  </div>
+</div>
+
 <div class="dashboard-container">
   <h1>Influencer Trust Leaderboard</h1>
   <p class="subtitle">Real-time rankings of health influencers based on scientific accuracy, credibility, and transparency. Updated daily using AI-powered analysis.</p>

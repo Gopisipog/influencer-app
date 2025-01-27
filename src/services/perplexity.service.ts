@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
 import { PerplexityResponse } from '../app/models/types';
 
@@ -9,11 +9,22 @@ import { PerplexityResponse } from '../app/models/types';
 })
 export class PerplexityService {
   private apiUrl = 'https://api.perplexity.ai/chat/completions';
-  private apiKey = environment.perplexityApiKey;
+  private apiKey: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.apiKey = localStorage.getItem('perplexity_api_key') || environment.perplexityApiKey;
+  }
+
+  setApiKey(key: string) {
+    this.apiKey = key;
+    localStorage.setItem('perplexity_api_key', key);
+  }
 
   getResponse(prompt: string): Observable<PerplexityResponse> {
+    if (!this.apiKey) {
+      return throwError(() => new Error('API_KEY_REQUIRED'));
+    }
+
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${this.apiKey}`)
       .set('Content-Type', 'application/json');
